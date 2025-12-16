@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOTE APP</title>
+<style>
+    #heading {
+        color: blue;
+        font-size: 30px;
+        margin-left: 450px;
+    }
+    #para {
+        margin-left: 420px;
+    }
+    #container {
+        border: 1px solid grey;
+        height: 210px;
+        width: 200px;
+        border-radius: 5px;
+        display: flex;
+    }
+    .ele {
+        height: 200px;
+        width: 200px;
+        border-radius: 5px;
+        border: 2px solid grey;
+        padding: 5px;
+        overflow-y: auto;
+    }
+    .ele:hover {
+        background-color:skyblue;
+    }
+    #plus {
+        width:40px;
+        height:18px;
+        margin-left: 80px;
+        margin-top: 90px;
+        border:none;
+    }
+    #main {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        flex-wrap: wrap;
+        width: 100%;
+    }
+</style>
+</head>
+<body>
+<h3 id="heading">NOTE APP</h3>
+<p id="para">Double click on note to remove it</p>
+<div id="main">
+    <div id="container">
+        <button id="plus">+</button>
+    </div>
+</div>
+
+<script>
+const main_ele = document.getElementById("main");
+const plus_ele = document.getElementById("plus");
+const container_ele = document.getElementById("container");
+function localStoragedata() {
+    try {
+        return JSON.parse(localStorage.getItem("data")) || [];
+    } 
+    catch(e){
+        console.log("no data is there in local storage")
+    }
+}
+function creatingdivelement(id) {
+    const div_ele = document.createElement("div");
+    div_ele.className = "ele";
+    div_ele.contentEditable = "true";
+    div_ele.addEventListener("input", () => {
+        const notes = localStoragedata();
+        if (div_ele.innerHTML.trim() === "") return;
+        const index = notes.findIndex(n => n.id === id);
+        if (index >= 0) {
+            notes[index].text = div_ele.innerHTML;
+        } else {
+            notes.push({id: id, text: div_ele.innerHTML});
+        }
+        localStorage.setItem("data", JSON.stringify(notes));
+        div_ele.style.color = "blue";
+    });
+    div_ele.addEventListener("dblclick", () => {
+        if (confirm("Are you sure to delete?")) {
+            let notes = localStoragedata();
+        notes = notes.filter(note => note.id !== id);
+        localStorage.setItem("data", JSON.stringify(notes));
+        main_ele.removeChild(div_ele);
+        }
+    });
+    main_ele.insertBefore(div_ele, container_ele);
+}
+plus_ele.addEventListener("click", () => {
+    let noteId = Math.round(Math.random() * 1000); 
+    localStorage.setItem("noteId", noteId);        
+    creatingdivelement(noteId);                          
+});
+</script>
+</body>
+</html>
