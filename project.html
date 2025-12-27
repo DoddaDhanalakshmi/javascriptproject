@@ -136,6 +136,20 @@ function creatingdivelement(id) {
         main_ele.removeChild(div_ele);
         }
     });
+    let lastTap = 0;
+    div_ele.addEventListener("touchend", () => {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 300 && tapLength > 0) { 
+            if (confirm("Are you sure to delete?")) {
+                let notes = localStoragedata();
+                notes = notes.filter(note => note.id !== id);
+                localStorage.setItem("data", JSON.stringify(notes));
+                main_ele.removeChild(div_ele);
+            }
+        }
+        lastTap = currentTime;
+    });
     main_ele.insertBefore(div_ele, container_ele);
 }
 plus_ele.addEventListener("click", () => {
